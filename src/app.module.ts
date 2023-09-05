@@ -6,6 +6,7 @@ import configuration from './config/configuration';
 import { PrismaService } from './prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { AccountModule } from './account/account.module';
+import { PaymasterModule } from './paymaster/paymaster.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AccountModule } from './account/account.module';
     }),
     AuthModule,
     AccountModule,
+    PaymasterModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
