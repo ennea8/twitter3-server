@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { AccountService } from '../account/account.service';
 import { JwtService } from '@nestjs/jwt';
 import * as jose from 'jose';
 import { PrismaService } from '../prisma.service';
@@ -10,13 +10,13 @@ import * as _ from 'lodash';
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private accountService: AccountService,
     private jwtService: JwtService,
     private prisma: PrismaService,
   ) {}
 
   async signIn(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
+    const user = await this.accountService.findOne(username);
     if (user?.password !== pass) {
       throw new UnauthorizedException();
     }
