@@ -8,6 +8,8 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "db:p": "prisma db push",
+    "db:m": "prisma migrate dev",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -26,6 +28,10 @@
     "@nestjs/jwt": "^10.1.1",
     "@nestjs/platform-express": "^9.0.0",
     "@prisma/client": "5.2.0",
+    "@types/lodash": "^4.14.197",
+    "ethers": "^6.7.1",
+    "jose": "^4.14.5",
+    "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },
