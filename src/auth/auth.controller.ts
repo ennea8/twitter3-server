@@ -17,12 +17,12 @@ import * as jose from 'jose';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Public()
-  @HttpCode(HttpStatus.OK)
-  @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
-  }
+  // @Public()
+  // @HttpCode(HttpStatus.OK)
+  // @Post('login')
+  // signIn(@Body() signInDto: Record<string, any>) {
+  //   return this.authService.signIn(signInDto.username, signInDto.password);
+  // }
 
   @Public()
   @HttpCode(HttpStatus.OK)
@@ -33,9 +33,12 @@ export class AuthController {
     return this.authService.web3authVerify(idToken, app_pub_key);
   }
 
-  @Public()
   @Get('profile')
   getProfile(@Request() req) {
-    return req.user;
+    const address = req.user.sub;
+
+    const accountInfo = this.authService.getProfile(address);
+
+    return accountInfo;
   }
 }

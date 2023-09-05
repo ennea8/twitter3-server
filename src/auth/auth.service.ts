@@ -15,16 +15,16 @@ export class AuthService {
     private prisma: PrismaService,
   ) {}
 
-  async signIn(username: string, pass: string): Promise<any> {
-    const user = await this.accountService.findOne(username);
-    if (user?.password !== pass) {
-      throw new UnauthorizedException();
-    }
-    const payload = { sub: user.userId, username: user.username };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
-  }
+  // async signIn(username: string, pass: string): Promise<any> {
+  //   const user = await this.accountService.findOne(username);
+  //   if (user?.password !== pass) {
+  //     throw new UnauthorizedException();
+  //   }
+  //   const payload = { sub: user.userId, username: user.username };
+  //   return {
+  //     access_token: await this.jwtService.signAsync(payload),
+  //   };
+  // }
 
   // verify and register
   async web3authVerify(idToken: string, appPubKey: string) {
@@ -36,12 +36,10 @@ export class AuthService {
       algorithms: ['ES256'],
     });
 
-    console.log('jwtDecoded', JSON.stringify(jwtDecoded.payload));
+    // console.log('jwtDecoded', JSON.stringify(jwtDecoded.payload));
 
     // Checking `app_pub_key` against the decoded JWT wallet's public_key
     if ((jwtDecoded.payload as any).wallets[0].public_key === appPubKey) {
-      // TODO generate token
-
       const address = computeAddress('0x' + appPubKey);
 
       const account = await this.prisma.account.findUnique({
@@ -50,14 +48,15 @@ export class AuthService {
         },
       });
 
-      if (account) {
-        return _.pick(account, ['address']);
-      } else {
+      const accessToken = await this.jwtService.signAsync({ sub: address });
+
+      if (!account) {
         const data = jwtDecoded.payload;
         const result = await this.prisma.account.create({
           data: {
             address,
-            providerType: 'twitter',
+            providerType: 'twitter', // TODO hard code now
+            accessToken,
             twitterInfo: {
               create: {
                 profileImage: _.get(data, 'profileImage', '') as string,
@@ -84,14 +83,30 @@ export class AuthService {
             },
           },
         });
-
-        return result;
       }
 
-      // Verified
-      return { name: 'Verification Successful' };
+      //TODO update  accessToken in db?
+
+      return {
+        address,
+        accessToken,
+      };
     } else {
-      return { name: 'Verification Failed' };
+      throw new UnauthorizedException('verify failed');
     }
+  }
+
+  async getProfile(address: string) {
+    return await this.prisma.account.findUnique({
+      where: {
+        address,
+      },
+      // select: {
+      //   address: true,
+      // },
+      include: {
+        twitterInfo: true,
+      },
+    });
   }
 }
