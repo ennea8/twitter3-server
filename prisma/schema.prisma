@@ -15,18 +15,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  name  String?
-  posts Post[]
+
+model Account {
+  id           Int          @id @default(autoincrement())
+  address      String       @unique
+  aaAddress    String?
+  providerType String // 'twitter'
+  twitterInfo  TwitterInfo?
+  accessToken  String?
 }
 
-model Post {
-  id        Int      @default(autoincrement()) @id
-  title     String
-  content   String?
-  published Boolean? @default(false)
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+model TwitterInfo {
+  id      Int    @id @default(autoincrement())
+  address String @unique
+
+  account Account? @relation(fields: [address], references: [address])
+
+  name         String?
+  email        String?
+  profileImage String?
+  typeOfLogin  String?
+
+  idToken           String?
+  oAuthAccessToken  String?
+  oAuthIdToken      String?
+  touchIDPreference String?
+  appState          String?
+  dappShare         String?
+  verifier          String?
+  verifierId        String?
+  aggregateVerifier String?
 }
