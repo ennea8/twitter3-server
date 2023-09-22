@@ -7,6 +7,7 @@ import { PrismaService } from './prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { AccountModule } from './account/account.module';
 import { PaymasterModule } from './paymaster/paymaster.module';
+import { NodeModule } from './node/node.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PaymasterModule } from './paymaster/paymaster.module';
     AuthModule,
     AccountModule,
     PaymasterModule,
+    NodeModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
